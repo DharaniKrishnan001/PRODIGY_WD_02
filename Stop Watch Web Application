@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    .stopwatch {
+        margin: 50px auto;
+        width: 200px;
+    }
+    .display {
+        font-size: 36px;
+        border: 2px solid #ccc;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    button {
+        font-size: 18px;
+        padding: 10px 20px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+
+<div class="stopwatch">
+    <div class="display">00:00:00</div>
+    <button id="startStop" onclick="startStop()">Start</button>
+    <button onclick="lap()">Lap</button>
+    <button onclick="reset()">Reset</button>
+</div>
+
+<script>
+    let timer;
+    let isRunning = false;
+    let startTime;
+    let lapCount = 1;
+
+    function startStop() {
+        if (isRunning) {
+            clearInterval(timer);
+            document.getElementById('startStop').innerHTML = 'Start';
+        } else {
+            startTime = Date.now() - lapCount * 1000; // Adjust start time if resuming after a pause
+            timer = setInterval(updateDisplay, 10);
+            document.getElementById('startStop').innerHTML = 'Stop';
+        }
+        isRunning = !isRunning;
+    }
+
+    function updateDisplay() {
+        let elapsedTime = Date.now() - startTime;
+        let formattedTime = new Date(elapsedTime).toISOString().substr(11, 8);
+        document.querySelector('.display').innerHTML = formattedTime;
+    }
+
+    function lap() {
+        let lapTime = Date.now() - startTime;
+        let formattedLapTime = new Date(lapTime).toISOString().substr(11, 8);
+        let lapDisplay = document.createElement('div');
+        lapDisplay.innerHTML = `Lap ${lapCount}: ${formattedLapTime}`;
+        document.querySelector('.stopwatch').appendChild(lapDisplay);
+        lapCount++;
+    }
+
+    function reset() {
+        clearInterval(timer);
+        document.querySelector('.display').innerHTML = '00:00:00';
+        document.getElementById('startStop').innerHTML = 'Start';
+        isRunning = false;
+        lapCount = 1;
+        document.querySelectorAll('.stopwatch div').forEach(el => el.remove());
+    }
+</script>
+
+</body>
+</html>
